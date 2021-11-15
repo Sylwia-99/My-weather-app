@@ -10,25 +10,40 @@ export default function App() {
   const REACT_APP_API_URL2 = 'https://weather.visualcrossing.com/VisualCrossingWebServices';
   const REACT_APP_API_KEY2 = 'TC86C5G47QV3FN976APULXE6V';
 
-  //const REACT_APP_API_URL2 = 'http://api.worldweatheronline.com/premium/v1';
-  //const REACT_APP_API_KEY2 = '44664dbe89b0459fa53104024212910';
-
-
-  //const REACT_APP_ICON_URL = 'https://openweathermap.org/img/w'
-  
+  const REACT_APP_API_URL3 = 'http://dataservice.accuweather.com';
+  const REACT_APP_API_KEY3 = 'viy1q3cmEW0s54AwffJ1NEPJoswG2xxG';
+    
   const [lat, setLat] = useState('');
   const [long, setLong] = useState('');
   const [data1, setData1] = useState([]);
   const [data2, setData2] = useState([]);
+  const [data3, setData3] = useState([]);
   const [city, setCity] = useState('');
-
-  const updateCity = (e) =>{
-    console.log('city',e);
-  }
 
   const wrapperSetCity = useCallback(val => {
     setCity(val);
-    console.log(val)
+    const API1 = `${REACT_APP_API_URL1}/weather/?q=${val}&units=metric&APPID=${REACT_APP_API_KEY1}`;
+    const API2 =`${REACT_APP_API_URL2}/rest/services/timeline/${val}/today/?unitGroup=us&key=${REACT_APP_API_KEY2}`
+    const APIFORID =`${REACT_APP_API_URL3}/locations/v1/cities/autocomplete?apikey=${REACT_APP_API_KEY3}&q=${val}`;
+
+    fetch(API1).then(response => response.json())
+      .then(result => {
+        setData1(result)
+      });
+    
+    fetch(API2).then(response => response.json())
+      .then(result => {
+        setData2(result)
+      });    
+
+    fetch(APIFORID).then(response => response.json())
+      .then(result => {
+        const cityID=parseInt(result[0].Key);
+        fetch(`${REACT_APP_API_URL3}/forecasts/v1/hourly/1hour/${cityID}?apikey=${REACT_APP_API_KEY3}&language=en&details=true&metric=true`).then(response => response.json())
+          .then(result => {
+            setData3(result);
+          });
+      });        
   }, [setCity]);
 
   useEffect(() => {
@@ -37,25 +52,28 @@ export default function App() {
           setLat(position.coords.latitude);
           setLong(position.coords.longitude);
         });
-    
-        console.log("Latitude is:", lat);
-        console.log("Longitude is:", long);
 
         const API1 = `${REACT_APP_API_URL1}/weather/?lat=${lat}&lon=${long}&units=metric&APPID=${REACT_APP_API_KEY1}`;
-        const API2 =`${REACT_APP_API_URL2}/rest/services/timeline/${lat},${long}/today/?unitGroup=us&key=${REACT_APP_API_KEY2}`
-        //const API2 =`${REACT_APP_API_URL2}/weather.ashx?key=${REACT_APP_API_KEY2}&q=${lat},${long}&num_of_days=1&t&format=json`
-        console.log(API1);
+        const API2 =`${REACT_APP_API_URL2}/rest/services/timeline/${lat},${long}/today/?unitGroup=us&key=${REACT_APP_API_KEY2}`;
+        const API3 =`${REACT_APP_API_URL3}/locations/v1/cities/geoposition/search?apikey=${REACT_APP_API_KEY3}&q=${lat},${long}&language=en&details=true`;
 
-        console.log(API2);
         try{
           await Promise.all([
             fetch(API1).then(response => response.json())
             .then(result => {
-              setData1(result)
+              setData1(result);
             }),
             fetch(API2).then(response => response.json())
             .then(result => {
-              setData2(result)
+              setData2(result);
+            }),
+            fetch(API3).then(response => response.json())
+              .then(result => {
+                const cityID=parseInt(result.Details.Key);
+                fetch(`${REACT_APP_API_URL3}/forecasts/v1/hourly/1hour/${cityID}?apikey=${REACT_APP_API_KEY3}&language=en&details=true&metric=true`).then(response => response.json())
+                  .then(result => {
+                    setData3(result);
+                  });
             }),
           ]);
         } catch(err){
@@ -67,8 +85,8 @@ export default function App() {
   
   return (
     <div className="App">
-      {(typeof data1.main !== 'undefined' && typeof data2.days !== 'undefined') ? (
-        <Weather className="weather" data1={data1} data2={data2} city={city}
+      {(typeof data1.main !== 'undefined' && typeof data2.days !== 'undefined' && data3!== 'undefined') ? (
+        <Weather className="weather" data1={data1} data2={data2} data3={data3} city={city}
         cityStateSetter={wrapperSetCity}/>
       ): (
         <div></div>

@@ -74,4 +74,9 @@ p{
     background-color: #2c296073;
     color: white;
     border: none;
+    width: 15rem;
+}
+
+::placeholder{
+    color:white;
 }
