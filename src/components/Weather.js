@@ -131,8 +131,20 @@ const Weather = ({data1, data2, data3, cityStateSetter}) => {
             description="Mgła";
         }
 
-        if(now.getHours()>=17){
+        if(now.getHours()>=17 && description==="Czyste niebo"){
             backgroundStyle.backgroundImage = "url(/night2.jpg)";
+        } else if(now.getHours()>=17 && description==="Pogodnie"){
+            backgroundStyle.backgroundImage = "url(/night.jpg)"; 
+        } else if(now.getHours()>=17 && description==="Deszczowo"){
+            backgroundStyle.backgroundImage = "url(/night-rain.jpg)";
+        } else if(now.getHours()>=17 && description==="Pochmurno"){
+            backgroundStyle.backgroundImage = "url(/night-cloudy.jpg)";
+        } else if(now.getHours()>=17 && description==="Pada śnieg"){
+            backgroundStyle.backgroundImage = "url(/night-snow.jpg)";
+        } else if(now.getHours()>=17 && description==="Burza"){
+            backgroundStyle.backgroundImage = "url(/night-storm.jpg)";
+        } else if(now.getHours()>=17 && description==="Mgła"){
+            backgroundStyle.backgroundImage = "url(/night-fog.jpg)";
         }
 
         
