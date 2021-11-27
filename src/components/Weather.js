@@ -50,7 +50,7 @@ const Weather = ({data1, data2, data3, cityStateSetter}) => {
     const day = now.getDay(); 
     const date = `${now.getDate()}.${now.getMonth()+1}.${now.getFullYear()}`;
     const dayName = daysOfWeek.find(el => el.value === day).day;
-    const time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+    const time = `${now.getHours()}:${now.getMinutes()}`;
     
     const {register, handleSubmit} = useForm();
 
@@ -60,9 +60,7 @@ const Weather = ({data1, data2, data3, cityStateSetter}) => {
         cityStateSetter(formData.city)     
    }
 
-    if(dataOne.cod !== 400 && dataTwo.length!=0 && dataThree.length!=0){
-        const nowDateTwo = dataTwo.days[0].hours.find(el => el.datetime === `${now.getHours()}:00:00`);
-
+    if(dataOne.cod !== 400 && dataTwo.length !== 0 && dataThree.length !== 0){
         const sunriseOne = dataOne.sys.sunrise;
         const sunsetOne = dataOne.sys.sunset;
 
@@ -102,7 +100,7 @@ const Weather = ({data1, data2, data3, cityStateSetter}) => {
 
         let description = "";
 
-        if(dataOne.weather[0].description.includes('clear') && cloudcover==0){
+        if(dataOne.weather[0].description.includes('clear') && cloudcover == 0){
             backgroundStyle.backgroundImage = "url(/sunny_clear_sky.jpg)";
             description="Czyste niebo";
         }
@@ -110,40 +108,40 @@ const Weather = ({data1, data2, data3, cityStateSetter}) => {
             backgroundStyle.backgroundImage = "url(/sunny.jpg)";
             description="Pogodnie";
         }
-        else if(dataOne.weather[0].description.includes('rain') && dataThree[0].Rain.Value>0){
+        else if(dataOne.weather[0].description.includes('rain')){
             backgroundStyle.backgroundImage = "url(/rainy.jpg)";
             description="Deszczowo";
         }
-        else if(dataOne.weather[0].description.includes('clouds') && dataThree[0].IsDaylight == false){
+        else if(dataOne.weather[0].description.includes('clouds') && cloudcover > 50){
             backgroundStyle.backgroundImage = "url(/cloudy.jpg)";
             description="Pochmurno";
         }
-        else if(dataOne.weather[0].description.includes('snow') && dataThree[0].Snow.Value>0){
+        else if(dataOne.weather[0].description.includes('snow')){
             backgroundStyle.backgroundImage = "url(/snow.jpg)";
             description="Pada śnieg";
         }
-        else if(dataOne.weather[0].description.includes('storm') && dataThree[0].ThunderstormProbability>50){
+        else if(dataOne.weather[0].description.includes('storm')){
             backgroundStyle.backgroundImage = "url(/storm.jfif)";
             description="Burza";
         }
-        else if(dataOne.weather[0].description.includes('mist') && cloudcover>50){
+        else if(dataOne.weather[0].description.includes('mist') && cloudcover > 50){
             backgroundStyle.backgroundImage = "url(/mist.jpg)";
             description="Mgła";
         }
 
-        if(now.getHours()>=17 && description==="Czyste niebo"){
+        if(now.getHours() >= 17 && description === "Czyste niebo"){
             backgroundStyle.backgroundImage = "url(/night2.jpg)";
-        } else if(now.getHours()>=17 && description==="Pogodnie"){
+        } else if(now.getHours() >= 17 && description ==="Pogodnie"){
             backgroundStyle.backgroundImage = "url(/night.jpg)"; 
-        } else if(now.getHours()>=17 && description==="Deszczowo"){
+        } else if(now.getHours() >= 17 && description === "Deszczowo"){
             backgroundStyle.backgroundImage = "url(/night-rain.jpg)";
-        } else if(now.getHours()>=17 && description==="Pochmurno"){
+        } else if(now.getHours() >= 17 && description === "Pochmurno"){
             backgroundStyle.backgroundImage = "url(/night-cloudy.jpg)";
-        } else if(now.getHours()>=17 && description==="Pada śnieg"){
+        } else if(now.getHours() >= 17 && description === "Pada śnieg"){
             backgroundStyle.backgroundImage = "url(/night-snow.jpg)";
-        } else if(now.getHours()>=17 && description==="Burza"){
+        } else if(now.getHours() >= 17 && description === "Burza"){
             backgroundStyle.backgroundImage = "url(/night-storm.jpg)";
-        } else if(now.getHours()>=17 && description==="Mgła"){
+        } else if(now.getHours() >= 17 && description === "Mgła"){
             backgroundStyle.backgroundImage = "url(/night-fog.jpg)";
         }
 
@@ -189,7 +187,7 @@ const Weather = ({data1, data2, data3, cityStateSetter}) => {
     
     return(
         <div className="weather" style={backgroundStyle}>
-            {dataOne.cod == 400 || dataTwo.length == 0 ? `Nie udało sie pobrac pogody` : content}
+            {dataOne.cod === 400 || dataTwo.length === 0 || dataThree.length === 0 ? `Nie udało sie pobrac pogody` : content}
         </div>
     );
 }
